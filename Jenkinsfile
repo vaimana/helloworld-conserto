@@ -15,7 +15,7 @@ node {
         
         docker.withServer("tcp://192.168.46.242:2376") {
             app.inside {
-                sh "echo "Tests passed""
+                sh 'echo "Tests passed"'
             }
         }
     }
