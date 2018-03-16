@@ -3,11 +3,14 @@ node {
 
     stage("Clone repository") {
         checkout scm
+        sh "git rev-parse --short HEAD > .git/commit-id"                        
+        commit_id = readFile('.git/commit-id').trim()
     }
 
     stage("Build image") {
         docker.withServer("tcp://192.168.46.242:2376") {
-            app = docker.build("helloworld-conserto:${env.BUILD_ID}")
+            //app = docker.build("helloworld-conserto:${env.BUILD_ID}")
+            app = docker.build("helloworld-conserto:${commit_id}")
         }
     }
 
@@ -21,7 +24,8 @@ node {
     
     stage("Deploy container") {
         docker.withServer("tcp://192.168.46.242:2376") {
-            sh 'docker run -d --rm -p 8000:80 --name conserto-test helloworld-conserto:${env.BUILD_ID}'
+            sh 'docker container rm -f conserto-test'
+            docker.image("helloworld-conserto:${commit_id}").run("--name conserto-test -p 8000:80")
         }
     }
 }
