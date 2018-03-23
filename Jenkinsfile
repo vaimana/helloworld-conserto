@@ -24,7 +24,7 @@ node {
     
     stage("Deploy container") {
         docker.withServer("tcp://192.168.46.115:2376") {
-            sh 'docker container rm -f conserto-test'
+            sh ' docker stop conserto-test || true && docker rm conserto-test || true'
             docker.image("helloworld-conserto:${commit_id}").run("--name conserto-test -p 8000:80")
         }
     }
