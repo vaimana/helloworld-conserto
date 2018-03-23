@@ -8,14 +8,14 @@ node {
     }
 
     stage("Build image") {
-        docker.withServer("tcp://192.168.46.242:2376") {
+        docker.withServer("tcp://192.168.46.115:2376") {
             //app = docker.build("helloworld-conserto:${env.BUILD_ID}")
             app = docker.build("helloworld-conserto:${commit_id}")
         }
     }
 
     stage("Test image") {
-        docker.withServer("tcp://192.168.46.242:2376") {
+        docker.withServer("tcp://192.168.46.115:2376") {
             app.inside {
                 sh 'echo "Tests passed"'
             }
@@ -23,7 +23,7 @@ node {
     }
     
     stage("Deploy container") {
-        docker.withServer("tcp://192.168.46.242:2376") {
+        docker.withServer("tcp://192.168.46.115:2376") {
             sh 'docker container rm -f conserto-test'
             docker.image("helloworld-conserto:${commit_id}").run("--name conserto-test -p 8000:80")
         }
